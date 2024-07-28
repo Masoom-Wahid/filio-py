@@ -5,6 +5,7 @@ from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 from argparse import ArgumentParser
 from fil.fil import Fil 
+from utils.file_helpers import get_file_extension
 
 """
 
@@ -45,5 +46,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if not args.file_name:
         raise FileNotFoundError
-    
+
     fil =  Fil(args.file_name)
