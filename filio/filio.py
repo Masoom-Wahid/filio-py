@@ -1,8 +1,8 @@
 from typing import List
-from ..utils.str_helpers import str_to_list
+from utils.str_helpers import str_to_list
 from os import rename,remove
 from shutil import copy as cp
-
+from typing import Optional
 """
 a filio can be described as an program watching for changes
 in a directory
@@ -26,8 +26,8 @@ class Filio:
             output : str,
             action : str,
             names : str,
-            prefix : str | None = None,
-            extension : str | None = None,
+            prefix : Optional[str] = None,
+            extension : Optional[str] = None,
             ) -> None:
         """
             input -> the input directory to be watched
@@ -41,9 +41,11 @@ class Filio:
         self.output : str = output
         self.action : str = action
         self.names : List[str] = str_to_list(names)
-        self.prefix : str | None = prefix
-        self.extension : List[str] | None = str_to_list(extension)
-
+        self.prefix : Optional[str] = prefix
+        if extension:
+            self.extension : Optional[List[str]] = str_to_list(extension)
+        else:
+            self.extension = None
 
 
     """
@@ -66,3 +68,7 @@ class Filio:
         remove(
             f"{self.input}/{file_name}"
         )
+
+
+    def __str__(self) -> str:
+        return f"{self.input}-{self.output}"
