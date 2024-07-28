@@ -1,5 +1,7 @@
 {
     "download watcher" : {
+
+		"input" : "/path/to/dir",
         "extension" : "pdf,xml",
 		"action" : "mov",
 		"name": "ch1,network",
