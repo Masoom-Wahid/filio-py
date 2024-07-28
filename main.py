@@ -4,7 +4,7 @@ import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 from argparse import ArgumentParser
-from Fil import Fil
+from fil.fil import Fil 
 
 """
 
@@ -23,6 +23,8 @@ from Fil import Fil
 
 """
 
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(message)s',
@@ -40,5 +42,8 @@ if __name__ == "__main__":
     parser.add_argument("file_name")
     parser.add_argument("-c","--cwd")
 
-
-
+    args = parser.parse_args()
+    if not args.file_name:
+        raise FileNotFoundError
+    
+    fil =  Fil(args.file_name)
