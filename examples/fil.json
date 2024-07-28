@@ -1,0 +1,9 @@
+{
+    "download watcher" : {
+        "extension" : "pdf,xml",
+		"action" : "mov",
+		"name": "ch1,network",
+		"output" : "path/to/dir",
+		"prefix" : "network_"
+    }
+}
