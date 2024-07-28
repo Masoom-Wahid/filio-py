@@ -4,7 +4,7 @@ import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 from argparse import ArgumentParser
-from core import Fil
+from Fil import Fil
 
 """
 
