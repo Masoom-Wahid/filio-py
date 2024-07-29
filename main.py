@@ -6,7 +6,7 @@ from watchdog.events import LoggingEventHandler
 from argparse import ArgumentParser
 from fil.fil import Fil 
 from utils.file_helpers import get_file_extension
-
+from utils.path import JsonPath
 """
 
     -> core
@@ -46,5 +46,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if not args.file_name:
         raise FileNotFoundError
-
-    fil =  Fil(args.file_name)
+    
+    fil : Fil = Fil(
+        JsonPath(args.file_name,sanitize_for_json=True,is_dir=False)
+    )

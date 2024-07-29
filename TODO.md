@@ -1,0 +1,1 @@
+output should not be mandatory when the action is del

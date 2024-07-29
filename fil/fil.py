@@ -11,8 +11,12 @@
 import json
 import  os
 from utils.file_helpers import *
-from filio.filio import Filio
-from typing import Dict
+from utils.path import JsonPath,DirPath
+from filio.cp_filio import CpFilio
+from filio.mov_filio import MovFilio
+from filio.del_filio import DelFilio
+from filio.base_filio import BaseFilio
+from typing import Dict,Union
 
 class FilFileNotFoundExceptin(Exception):
     def __init__(self, message):
@@ -24,8 +28,8 @@ class InvalidJsonFormatException(Exception):
 
 
 class Fil:
-    def __init__(self,path:str) -> None:
-        self.filios : Dict[str,Filio] = self.__get_filios(path)
+    def __init__(self,path:JsonPath) -> None:
+        self.filios : Dict[str,Union[MovFilio,CpFilio,DelFilio]] = self.__get_filios(path)
         for key,value in self.filios.items():
             print(f"{key}: {value}")
 
@@ -38,26 +42,30 @@ class Fil:
                     raise InvalidJsonFormatException("Invalid Json file format")
         except KeyError:
             raise InvalidJsonFormatException("Invalid Json file format") 
+        
 
-    def __get_filios(self,path : str) -> Dict[str,Filio]:
-        if (get_file_extension(path) == "json") and os.path.exists(path):
-            
-            result : Dict[str,Filio] = {}
 
-            with open(path,'r') as file:
-                data = json.load(file)
-                self.__santizie(data)
+    def __get_filios(self,path : JsonPath) -> Dict[str,Union[MovFilio,CpFilio,DelFilio]]:    
+        result : Dict[str,Union[MovFilio,CpFilio,DelFilio]] = {}
 
-                for key,value in data.items():
-                    result[key] = Filio(
-                        value["input"],
-                        value["output"],
-                        value["action"],
-                        value["name"],
-                        prefix=data.get("prefix",None),
-                        extension=data.get("extension",None)
-                    )
+        with open(path.abs_path,'r') as file:
+            data = json.load(file)
+            self.__santizie(data)
 
-            return result
-        else:
-            raise FilFileNotFoundExceptin("Invalid file, make sure it exists and has a .json extension")
+            # TODO: filter based on action which type of class will we push ?
+            for key,value in data.items():
+                result[key] = BaseFilio(
+                    DirPath(value["input"]),
+                    DirPath(value["output"]),
+                    value["action"],
+                    value["name"],
+                    prefix=data.get("prefix",None),
+                    extension=data.get("extension",None)
+                )
+
+        return result
+
+    def run(self):
+        """
+            filios -> thread()
+        """

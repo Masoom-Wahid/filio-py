@@ -1,11 +1,11 @@
 {
     "download watcher" : {
 
-		"input" : "/path/to/dir",
+		"input" : "/home/masoomwahid/other",
         "extension" : "pdf,xml",
 		"action" : "mov",
 		"name": "ch1,network",
-		"output" : "path/to/dir",
+		"output" : "/home/masoomwahid/other",
 		"prefix" : "network_"
     }
 }
