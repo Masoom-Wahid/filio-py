@@ -17,7 +17,7 @@ from filio.mov_filio import MovFilio
 from filio.del_filio import DelFilio
 from watchdog.observers import Observer
 from typing import Dict,Union
-from logging import getLogger
+from logging import getLogger,INFO,WARN
 
 class FilFileNotFoundExceptin(Exception):
     def __init__(self, message):
@@ -33,9 +33,6 @@ class FilException(Exception):
 class Fil:
     def __init__(self,path:JsonPath) -> None:
         self.filios : Dict[str,Union[MovFilio,CpFilio,DelFilio]] = self.__get_filios(path)
-        for key,value in self.filios.items():
-            print(f"{key}: {value}")
-
 
 
     def __santizie(self,value : Dict[str,str],action : Optional[str]) -> None:
@@ -106,11 +103,15 @@ class Fil:
         return result
 
     def run(self):
+        seperator = "*" * 100
         logger = getLogger()
-        logger.log()
         observer = Observer()
         for event_name,filio in self.filios.items():
-            
+            logger.log(
+                WARN,
+                f"  Started '{event_name}'\n\t\t\tin '{filio.input.abs_path}'\n\t\t\tfor actions of '{filio.action}'\n\t\t\tnames:'{filio.names}'\n\t\t\textensions of {filio.extension}"
+                )
+            print(f"\n{seperator}\n")
             observer.schedule(filio.handler,filio.input.abs_path,recursive=False)
             
         observer.start()

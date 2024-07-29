@@ -6,5 +6,13 @@
 		"action" : "del",
 		"name": "network",
     "prefix" : "ahmad_"
+  },
+  "network watcher" : {
+    "input" : "/home/masoomwahid/Documents",
+    "output" : "/home/masoomwahid/dummy",
+    "extension" : "pdf",
+		"action" : "cp",
+		"name": "hi",
+    "prefix" : "ahmad_"
   }
 }

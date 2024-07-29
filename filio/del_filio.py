@@ -18,7 +18,6 @@ class DelFilioHandler(FileSystemEventHandler):
 
         elif event.event_type == 'created':
             path : UserPath = UserPath(event.src_path)
-            print(type(self.filio))
 
             if self.filio.check_extension_and_name_exists(path):
                 self.filio.perform(

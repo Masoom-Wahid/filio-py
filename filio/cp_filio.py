@@ -18,10 +18,10 @@ class CpFilioHandler(FileSystemEventHandler):
 
         elif event.event_type == 'created':
             path : UserPath = UserPath(event.src_path)
-            self.filio.check_extension_and_name_exists(path)
-            self.filio.perform(
-                    path.full_file_name
-                )
+            if self.filio.check_extension_and_name_exists(path):
+                self.filio.perform(
+                        path.full_file_name
+                    )
 
 
 class CpFilio(BaseFilio):
@@ -32,10 +32,6 @@ class CpFilio(BaseFilio):
 
 
     def perform(self,file_name : str) -> None:
-        print( 
-            f"{self.input.abs_path}/{file_name}",
-            f"{self.output.abs_path}/{self.prefix}{file_name}"  
-        )
         copyfile( 
             f"{self.input.abs_path}/{file_name}",
             f"{self.output.abs_path}/{self.prefix}{file_name}"  

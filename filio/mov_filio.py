@@ -16,10 +16,10 @@ class MovFilioHandler(FileSystemEventHandler):
 
         elif event.event_type == 'created':
             path : UserPath = UserPath(event.src_path)
-            self.filio.check_extension_and_name_exists(path)
-            self.filio.perform(
-                    path.full_file_name
-                )
+            if self.filio.check_extension_and_name_exists(path):
+                self.filio.perform(
+                        path.full_file_name
+                    )
 
 class MovFilio(BaseFilio):
     def __init__(self, input: DirPath, output: DirPath, action: str, names: str, prefix: Optional[str] = None, extension: Optional[str] = None) -> None:
