@@ -1,19 +1,10 @@
 {
     "download watcher" : {
-
-		"input" : "/home/masoomwahid/other",
-        "extension" : "pdf,xml",
-		"action" : "mov",
-		"name": "ch1,network",
-		"output" : "/home/masoomwahid/other",
-		"prefix" : "network_"
-    },
-	"network watcherr" : {
-
-		"input" : "/home/masoomwahid/other",
-        "extension" : "pdf,xml",
+		"input" : "/home/masoomwahid/Documents",
+    "output" : "/home/masoomwahid/dummy",
+    "extension" : "pdf",
 		"action" : "del",
-		"name": "ch1,network",
-		"prefix" : "network_"
-    }
+		"name": "network",
+    "prefix" : "ahmad_"
+  }
 }

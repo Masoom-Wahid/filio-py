@@ -65,14 +65,16 @@ class BaseFilio:
         extension_exists : bool = False
 
         extension : str = file.get_extension()
-
-        for ext in self.extension:
-            if ext == extension:
-                extension_exists = True
-                break
+        if not self.extension:
+            extension_exists = True
+        else:
+            for ext in self.extension:
+                if ext == extension:
+                    extension_exists = True
+                    break
 
         for name in self.names:
-            if name == file.file_name:
+            if name in file.file_name:
                 name_exists = True
                 break
     
@@ -85,12 +87,8 @@ class BaseFilio:
         bunch of helper function for file operations
     """
 
-    def action(self,file_name : str) -> None:
+    def perform(self,file_name : str) -> None:
         raise NotImplementedError("action is not implemented for base class")
-
-
-    def listen(self) -> None:
-        pass
     
     def __str__(self) -> str:
         raise NotImplementedError("You cannot print BaseFilio class")

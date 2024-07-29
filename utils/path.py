@@ -15,7 +15,7 @@ class FilFileExceptin(Exception):
 class BasePath:
     def __init__(self,abs_path : str,sanitize_for_json=False,is_dir=True) -> None:
         self.abs_path : str = abs_path
-        self.full_file_name,self.file_name,self.__extension = self.get_file_name_and_extension()
+        self.full_file_name,self.file_name,self.extension = self.get_file_name_and_extension()
         self.__sanitize_for_json = sanitize_for_json
         self.__is_dir = is_dir
         self.__sanitize_paths()
@@ -35,7 +35,7 @@ class BasePath:
             return full_file_name,".".join(file_details[0:-1]),file_details[-1]
 
     def __sanitize_paths(self):
-        if self.__sanitize_for_json and  self.__extension != "json":
+        if self.__sanitize_for_json and  self.extension != "json":
             raise FilFileExceptin("Expected a file ending with .json")
 
         if not exists(self.abs_path):
@@ -79,7 +79,7 @@ class JsonPath(BasePath):
         super().__init__(abs_path, sanitize_for_json, is_dir)
 
     def get_extension(self) -> str:
-        return self.__extension
+        return self.extension
 
         
 
@@ -87,7 +87,12 @@ class JsonPath(BasePath):
 class UserPath(BasePath):
     def __init__(self, abs_path: str, sanitize_for_json=False, is_dir=False) -> None:
         super().__init__(abs_path, sanitize_for_json, is_dir)
+        # print(f"""
+        #         ABS_PATH -> {self.abs_path},
+        #         file_name -> {self.file_name}
+        #         extension -> {self.extension}
+        # """)
 
     
     def get_extension(self) -> str:
-        return self.__extension
+        return self.extension

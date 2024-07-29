@@ -15,8 +15,9 @@ from utils.path import JsonPath,DirPath
 from filio.cp_filio import CpFilio
 from filio.mov_filio import MovFilio
 from filio.del_filio import DelFilio
-from filio.base_filio import BaseFilio
+from watchdog.observers import Observer
 from typing import Dict,Union
+from logging import getLogger
 
 class FilFileNotFoundExceptin(Exception):
     def __init__(self, message):
@@ -72,28 +73,28 @@ class Fil:
                         DirPath(value["output"]),
                         action,
                         value["name"],
-                        prefix=data.get("prefix",None),
-                        extension=data.get("extension",None)
+                        prefix=value.get("prefix",None),
+                        extension=value.get("extension",None)
                     )
                 
                 elif action == "del":
-                    filio : MovFilio = DelFilio(
+                    filio : DelFilio = DelFilio(
                         DirPath(value["input"]),
                         None,
                         action,
                         value["name"],
-                        prefix=data.get("prefix",None),
-                        extension=data.get("extension",None)
+                        prefix=value.get("prefix",None),
+                        extension=value.get("extension",None)
                     )
 
                 elif action == "cp":
-                    filio : MovFilio = DelFilio(
+                    filio : CpFilio = CpFilio(
                         DirPath(value["input"]),
                         DirPath(value["output"]),
                         action,
                         value["name"],
-                        prefix=data.get("prefix",None),
-                        extension=data.get("extension",None)
+                        prefix=value.get("prefix",None),
+                        extension=value.get("extension",None)
                     )
                 else:
                     raise FilException("Invalid 'action', chose from 'mov','cp','del'")
@@ -105,6 +106,17 @@ class Fil:
         return result
 
     def run(self):
-        """
-            filios -> thread()
-        """
+        logger = getLogger()
+        logger.log()
+        observer = Observer()
+        for event_name,filio in self.filios.items():
+            
+            observer.schedule(filio.handler,filio.input.abs_path,recursive=False)
+            
+        observer.start()
+        try:
+            while observer.isAlive():
+                observer.join(1)
+        finally:
+            observer.stop()
+            observer.join()

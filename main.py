@@ -50,3 +50,5 @@ if __name__ == "__main__":
     fil : Fil = Fil(
         JsonPath(args.file_name,sanitize_for_json=True,is_dir=False)
     )
+
+    fil.run()
