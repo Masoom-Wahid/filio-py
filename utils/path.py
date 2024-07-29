@@ -12,7 +12,7 @@ class FilFileExceptin(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-class Path:
+class BasePath:
     def __init__(self,abs_path : str,sanitize_for_json=False,is_dir=True) -> None:
         self.abs_path : str = abs_path
         self.full_file_name,self.file_name,self.__extension = self.get_file_name_and_extension()
@@ -24,6 +24,15 @@ class Path:
     def get_extension(self) -> str:
         raise NotImplementedError("get extension is not implemented in BasePath class")
 
+
+    
+    def get_file_name_and_extension(self) -> Optional[Tuple[str,str,str]]:
+        full_file_name : list[str] = self.abs_path.split("/")[-1]
+        file_details : Tuple[str,str] = full_file_name.split(".")
+        if len(file_details) <= 1:
+            raise FilFileExceptin(f"Expected a file ending with a valid extension got {self.abs_path}")
+        else:
+            return full_file_name,".".join(file_details[0:-1]),file_details[-1]
 
     def __sanitize_paths(self):
         if self.__sanitize_for_json and  self.__extension != "json":
@@ -45,7 +54,7 @@ class Path:
         """
         
 
-class DirPath(Path):
+class DirPath(BasePath):
     def __init__(self, abs_path: str, sanitize_for_json=False, is_dir=True) -> None:
         super().__init__(abs_path, sanitize_for_json, is_dir)
 
@@ -65,18 +74,20 @@ class DirPath(Path):
 
 
 
-class JsonPath(Path):
+class JsonPath(BasePath):
     def __init__(self, abs_path: str, sanitize_for_json=True, is_dir=False) -> None:
         super().__init__(abs_path, sanitize_for_json, is_dir)
-
 
     def get_extension(self) -> str:
         return self.__extension
 
-    def get_file_name_and_extension(self) -> Optional[Tuple[str,str,str]]:
-        full_file_name : list[str] = self.abs_path.split("/")[-1]
-        file_details : Tuple[str,str] = full_file_name.split(".")
-        if len(file_details) <= 1:
-            raise FilFileExceptin(f"Expected a file ending with a valid extension got {self.abs_path}")
-        else:
-            return full_file_name,".".join(file_details[0:-1]),file_details[-1]
+        
+
+
+class UserPath(BasePath):
+    def __init__(self, abs_path: str, sanitize_for_json=False, is_dir=False) -> None:
+        super().__init__(abs_path, sanitize_for_json, is_dir)
+
+    
+    def get_extension(self) -> str:
+        return self.__extension

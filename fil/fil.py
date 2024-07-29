@@ -22,7 +22,9 @@ class FilFileNotFoundExceptin(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-class InvalidJsonFormatException(Exception):
+
+
+class FilException(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
@@ -35,13 +37,21 @@ class Fil:
 
 
 
-    def __santizie(self,data : Dict[str,Dict[str,str]]) -> None:
+    def __santizie(self,value : Dict[str,str],action : Optional[str]) -> None:
+        if action is None : raise FilException("Expected key 'action'")
         try:
-            for value in data.values():
-                if not (value["input"] and value["output"] and value["action"] and value["name"]):
-                    raise InvalidJsonFormatException("Invalid Json file format")
+            """
+                input and names are mandatory in any case
+                as for output , when we are deleting we dont need deletion so we dont want to 
+                check for output when the action is 'del'
+            """
+            if not (value["input"] and value["name"]):
+                raise FilException("Invalid Json file format")
+            if action != "del" and not value["output"]:
+                raise FilException("Invalid Json File Format")
+
         except KeyError:
-            raise InvalidJsonFormatException("Invalid Json file format") 
+            raise FilException("Invalid Json file format") 
         
 
 
@@ -50,18 +60,47 @@ class Fil:
 
         with open(path.abs_path,'r') as file:
             data = json.load(file)
-            self.__santizie(data)
+ 
 
-            # TODO: filter based on action which type of class will we push ?
             for key,value in data.items():
-                result[key] = BaseFilio(
-                    DirPath(value["input"]),
-                    DirPath(value["output"]),
-                    value["action"],
-                    value["name"],
-                    prefix=data.get("prefix",None),
-                    extension=data.get("extension",None)
-                )
+                action : str = value.get("action",None)
+                self.__santizie(value,action)
+
+                if action == "mov":
+                    filio : MovFilio = MovFilio(
+                        DirPath(value["input"]),
+                        DirPath(value["output"]),
+                        action,
+                        value["name"],
+                        prefix=data.get("prefix",None),
+                        extension=data.get("extension",None)
+                    )
+                
+                elif action == "del":
+                    filio : MovFilio = DelFilio(
+                        DirPath(value["input"]),
+                        None,
+                        action,
+                        value["name"],
+                        prefix=data.get("prefix",None),
+                        extension=data.get("extension",None)
+                    )
+
+                elif action == "cp":
+                    filio : MovFilio = DelFilio(
+                        DirPath(value["input"]),
+                        DirPath(value["output"]),
+                        action,
+                        value["name"],
+                        prefix=data.get("prefix",None),
+                        extension=data.get("extension",None)
+                    )
+                else:
+                    raise FilException("Invalid 'action', chose from 'mov','cp','del'")
+                
+
+
+                result[key] = filio
 
         return result
 

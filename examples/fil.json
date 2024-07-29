@@ -7,5 +7,13 @@
 		"name": "ch1,network",
 		"output" : "/home/masoomwahid/other",
 		"prefix" : "network_"
+    },
+	"network watcherr" : {
+
+		"input" : "/home/masoomwahid/other",
+        "extension" : "pdf,xml",
+		"action" : "del",
+		"name": "ch1,network",
+		"prefix" : "network_"
     }
 }

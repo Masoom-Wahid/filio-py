@@ -1,9 +1,7 @@
 from typing import List
-from utils.path import Path
+from utils.path import DirPath,UserPath
 from utils.str_helpers import str_to_list
-from utils.file_helpers import get_file_extension
 from os import rename,remove
-from shutil import copy as cp
 from typing import Optional
 
 
@@ -26,8 +24,8 @@ such as:
 class BaseFilio:
     def __init__(
             self,
-            input : Path,
-            output : Path,
+            input : DirPath,
+            output : DirPath,
             action : str,
             names : str,
             prefix : Optional[str] = None,
@@ -41,8 +39,8 @@ class BaseFilio:
             extension -> if the name matches than should we filter by extension [Optional]
             prefix -> whether the given file should or should not be moved or copied with a prefix [Optional]
         """
-        self.input : Path = input
-        self.output : Path = output
+        self.input : DirPath = input
+        self.output : DirPath = output
         self.action : str = action
         self.names : List[str] = str_to_list(names)
         self.prefix : Optional[str] = prefix
@@ -53,11 +51,20 @@ class BaseFilio:
 
 
 
-    def check_extension_and_name_exists(self,file_name : str) -> bool:
+    def check_extension_and_name_exists(self,file : UserPath) -> bool:
+        """
+        @param file -> it should be a UserPath meaning a file which user changed
+        the diffrence is that these are not checked for having .json file or being a dir
+        except they are sanitized and then splitted for their file_name,abs_path,extensions and etc...
+
+
+        so when the funciton is called it checks whether the user files are in the area which this user chagned
+        if so it should return True else False
+        """
         name_exists : bool = False
         extension_exists : bool = False
 
-        extension = get_file_extension(file_name)
+        extension : str = file.get_extension()
 
         for ext in self.extension:
             if ext == extension:
@@ -65,7 +72,10 @@ class BaseFilio:
                 break
 
         for name in self.names:
-            ...
+            if name == file.file_name:
+                name_exists = True
+                break
+    
 
         return name_exists and extension_exists
 
@@ -74,28 +84,14 @@ class BaseFilio:
     """
         bunch of helper function for file operations
     """
-    def mov(self,file_name : str) -> None:
-        rename(
-            f"{self.input}/{file_name}",
-            f"{self.output}/{self.prefix}{file_name}"
-        )
 
-    def copy(self,file_name : str) -> None:
-        cp( 
-            f"{self.input}/{file_name}",
-            f"{self.output}/{self.prefix}{file_name}"  
-        )
-
-    
-    def delete(self,file_name : str) -> None:
-        remove(
-            f"{self.input}/{file_name}"
-        )
+    def action(self,file_name : str) -> None:
+        raise NotImplementedError("action is not implemented for base class")
 
 
     def listen(self) -> None:
         pass
     
     def __str__(self) -> str:
-        return f"{self.input}-{self.output}"
+        raise NotImplementedError("You cannot print BaseFilio class")
     
